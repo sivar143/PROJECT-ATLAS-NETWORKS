@@ -50,39 +50,51 @@ Decision: **REJECTED against current PDS.**
 
 Fallback status: useful reference platform for the Wi-Fi/networking architecture.
 
-## 3. USB4 — ASMedia ASM4242
+## 3. USB4 — latest-generation target
 
-ASM4242 remains a strong candidate because it provides PCIe Gen4 x4 for two USB 40Gbps ports.
+The production target is now **USB4 Version 2 / Gen4 up to 80Gbps**, not first-generation 40Gbps USB4.
 
-Blocking dependencies:
-- host must expose Gen4 x4;
-- Linux/OpenWrt driver support must be demonstrated;
-- channel loss must be simulated;
-- Type-C/PD architecture must be validated.
+ASMedia ASM4242 is retained only as a fallback/reference because its published capability is USB4 Gen3x2 up to 40Gbps, despite its PCIe Gen4 x4 upstream interface. citeturn1search6turn1search7
 
-Status: **Candidate — not selected.**
+USB-IF now publishes USB4 v2 and Gen4 compliance material, including 80Gbps operation. citeturn1search0turn1search1
 
-## 4. 5GbE copper PHY
+Status: **Production controller selection BLOCKED pending an orderable USB4 v2/80Gbps host controller with complete documentation and Linux support.**
 
-Marvell's Alaska M portfolio provides suitable multi-gig PHY families. The preferred direction is a quad-port 5G/2.5G/1G PHY or quad-port 10G/5G/2.5G/1G PHY, subject to host interface compatibility and availability.
+## 4. Ethernet — latest-generation low-power PHY
 
-Status: **Candidate family — not selected.**
+The preferred production direction remains the current Marvell Alaska M multi-gig PHY family, selected by exact port density and host interface after power measurements. The family provides quad-port 5G and quad-port 10G/5G/2.5G options, EEE and other efficiency/security features. citeturn1search10
+
+For the two SFP+ ports, prefer direct SerDes/SFI from the Ethernet fabric where possible to avoid unnecessary PHY power.
+
+Status: **Leading candidate family — exact production part not frozen.**
 
 ## 5. USB Type-C PD
 
-TI TPS26750/TPS26750A are candidate PD controllers. TPS26750A is an active PD 3.2 controller supporting source/sink/DRP and EPR.
+USB-C PD will use the newest production-qualified PD controller that satisfies the latest applicable Type-C/PD specification and the X1 source/sink requirements. The product's actual VBUS power limit will be set by the system power and thermal budget.
+
+Status: **Latest-generation production controller selection pending final USB4 architecture.**
 
 The product will not advertise the controller's maximum theoretical PD power automatically. The actual port power will be limited by the system power and thermal budget.
 
 Status: **Candidate — not selected.**
 
-## 6. Secure element
+## 6. Power conversion
+
+Power silicon is now subject to a strict newest-production-qualified and efficiency-first rule. TI TPS544B28 is a current 20A synchronous buck candidate with PMBus, integrated MOSFETs, telemetry and Eco-mode/FCCM; it is a strong candidate for high-current X1 rails. citeturn2search2
+
+For rails above its practical operating point, current 40A-class devices such as TPS548D26 may be evaluated. citeturn2search1
+
+Preview-only devices are excluded from the production BOM until they reach production status.
+
+Status: **Leading power candidates identified — final rail-by-rail selection pending SoC and measured load requirements.**
+
+## 7. Secure element
 
 Microchip ATECC608 TrustFLEX-family devices are candidates for device identity and private-key protection.
 
 Status: **Candidate — not selected.**
 
-## 7. Required architecture change
+## 8. Required architecture change
 
 The current PDS requires:
 
@@ -103,7 +115,7 @@ A high-performance ARM application/network processor with Gen4 PCIe plus a dedic
 
 Architecture B is currently the more credible fallback if no suitable integrated consumer networking SoC is found.
 
-## 8. Selection gate
+## 9. Selection gate
 
 No schematic pinout is frozen until a candidate passes:
 - PCIe generation/lane test;
