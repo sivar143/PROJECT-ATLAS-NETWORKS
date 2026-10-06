@@ -2,7 +2,15 @@
 
 This directory defines the product-level architecture for the ATLAS ecosystem identified in the ATLAS X1 project report.
 
-The X1 is the engineering reference platform. Future products inherit common software, security, telemetry, provisioning and management concepts but are not assumed to reuse the X1 PCB.
+The X1 is the engineering reference platform. Future products inherit common software, security, telemetry, provisioning, management and hardware-safety concepts but are not assumed to reuse the X1 PCB.
+
+## Global hardware design policy
+
+All ATLAS hardware products must follow:
+
+- [ATLAS Global Power and Data Safety Architecture](../engineering/ATLAS-Global-Power-and-Data-Safety-Architecture.md)
+
+This policy requires appropriate fuse/protection and sensing on protected power branches and interface-appropriate protection/sensing on applicable data interfaces, with active fault isolation where practical.
 
 ## Product design documents
 
