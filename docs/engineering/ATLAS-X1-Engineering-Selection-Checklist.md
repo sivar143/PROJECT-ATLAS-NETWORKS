@@ -62,6 +62,11 @@
 - [ ] impedance targets calculated
 - [ ] SI/PI constraints imported
 - [ ] mechanical envelope frozen
+- [ ] connector datum and mounting-hole coordinates frozen
+- [ ] antenna locations and articulation envelope defined
+- [ ] RF/digital zoning approved
+- [ ] fan/filter/heatsink envelope coordinated with PCB
+- [ ] PCB-to-mechanical tolerance stack reviewed
 - [ ] schematic ERC strategy defined
 - [ ] DFM requirements defined
 - [ ] protection devices placed for fault containment
@@ -73,6 +78,9 @@
 - [ ] BOM lifecycle review
 - [ ] SI/PI review
 - [ ] thermal review
+- [ ] airflow/CFD review
+- [ ] antenna/RF placement review
+- [ ] enclosure serviceability review
 - [ ] mechanical review
 - [ ] security review
 - [ ] power/data safety architecture review
