@@ -17,7 +17,15 @@ All ATLAS products shall share a common management model where practical:
 
 Hardware remains product-specific.
 
-## 2. Product matrix
+## 2. Global hardware safety rule
+
+All ATLAS hardware products shall implement the mandatory requirements in [ATLAS Global Power and Data Safety Architecture](../engineering/ATLAS-Global-Power-and-Data-Safety-Architecture.md).
+
+At minimum, every separately protected power branch shall have appropriate fuse/protection and power sensing, and every applicable external or safety-critical data interface shall have interface-appropriate protection/sensing and fault handling. High-speed data paths must preserve signal integrity; this requirement does not mean inserting conventional current-sense elements into high-speed differential pairs.
+
+These are architecture-level release gates and must be reflected in schematics, PCB floorplans, BOMs, firmware telemetry and verification plans.
+
+## 3. Product matrix
 
 | Product | Primary role | Connectivity focus | Management |
 |---|---|---|---|
@@ -32,7 +40,7 @@ Hardware remains product-specific.
 | Cloud Controller | fleet management | API/control plane | web/cloud |
 | Mobile Apps | user administration | HTTPS/API | cloud/local pairing |
 
-## 3. Common security model
+## 4. Common security model
 
 Every managed hardware device should support:
 
@@ -46,7 +54,7 @@ Every managed hardware device should support:
 8. factory provisioning;
 9. recovery path.
 
-## 4. Common software model
+## 5. Common software model
 
 The hardware products should expose a consistent internal abstraction:
 
@@ -54,7 +62,7 @@ Device -> Interfaces -> Networks -> Policies -> Services -> Telemetry -> Events
 
 This permits the mobile/cloud software to present a consistent experience while preserving hardware-specific capabilities.
 
-## 5. Network hierarchy
+## 6. Network hierarchy
 
 The ecosystem should represent:
 
@@ -67,16 +75,18 @@ Organization
         -> Policy
         -> Event
 
-## 6. Interoperability
+## 7. Interoperability
 
 Products shall support standards-based networking rather than requiring an ATLAS-only topology. Proprietary management features must remain optional.
 
-## 7. Lifecycle
+## 8. Lifecycle
 
 All products should use a common lifecycle:
 
 Concept -> Architecture -> Component selection -> Prototype -> Validation -> Certification -> Production -> Maintenance -> End-of-support
 
-## 8. Product-specific design files
+Power/data safety architecture review is required during architecture and component selection and again before schematic/PCB release.
+
+## 9. Product-specific design files
 
 Detailed hardware documents shall be created only when that product enters active engineering. This prevents premature component decisions and keeps the family architecture separate from fabrication data.
