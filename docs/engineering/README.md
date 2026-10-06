@@ -31,6 +31,6 @@ This package converts the approved ATLAS X1 product concept and PDS into an engi
 - L6: DVT
 - L7: PVT / production release
 
-Current target: L1 architecture baseline.
+Current maturity: L1 architecture baseline progressing into L2 component-selection and physical-design preparation. PCB, RF, thermal and mechanical documents remain preliminary until the platform/component and reference-design gates are frozen.
 
 No document in this directory should be treated as a production release until its assumptions have been validated against selected silicon, reference designs, simulations and prototypes.
