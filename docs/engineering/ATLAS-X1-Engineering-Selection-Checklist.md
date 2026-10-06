@@ -18,6 +18,7 @@
 - [ ] SFP management path defined
 - [ ] magnetics selected
 - [ ] ESD devices selected
+- [ ] per-port data safety/protection and fault-monitoring architecture defined
 
 ## Gate C — USB4
 
@@ -27,6 +28,8 @@
 - [ ] ESD selected
 - [ ] retimer decision completed
 - [ ] Linux/OpenWrt driver validated
+- [ ] USB-C/USB4 power protection and sensing defined
+- [ ] high-speed protection/sensing reviewed for SI impact
 
 ## Gate D — Storage/security
 
@@ -37,16 +40,21 @@
 - [ ] secure element selected
 - [ ] boot selector architecture frozen
 - [ ] manufacturing provisioning flow defined
+- [ ] storage power branches protected and sensed
 
 ## Gate E — Power/thermal
 
 - [ ] system power budget completed
 - [ ] adapter rating derived from measurements
 - [ ] regulators selected
+- [ ] every separately protected power branch has a fuse/eFuse or equivalent protection
+- [ ] every applicable power rail has voltage/current sensing
+- [ ] protection trip and fault telemetry defined
 - [ ] heatsink envelope defined
 - [ ] fan selected
 - [ ] filter selected
 - [ ] thermal sensors selected
+- [ ] protection/sensing losses included in the power budget
 
 ## Gate F — PCB
 
@@ -56,6 +64,8 @@
 - [ ] mechanical envelope frozen
 - [ ] schematic ERC strategy defined
 - [ ] DFM requirements defined
+- [ ] protection devices placed for fault containment
+- [ ] high-speed data protection/sensing does not compromise SI/PI
 
 ## Gate G — Release
 
@@ -65,5 +75,7 @@
 - [ ] thermal review
 - [ ] mechanical review
 - [ ] security review
+- [ ] power/data safety architecture review
+- [ ] fault-isolation and recovery test plan approved
 - [ ] manufacturing review
 - [ ] EVT test plan approved
