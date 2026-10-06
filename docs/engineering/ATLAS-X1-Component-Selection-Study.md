@@ -4,100 +4,115 @@
 
 Candidate study only. No component in this document is a released BOM item.
 
-## 1. Networking/Wi-Fi platform candidates
+## Critical finding
 
-### Candidate A — Qualcomm Dragonwing NPro 7 / IPQ9574 family
+The initial study treated IPQ9574 as potentially suitable for the PDS PCIe Gen4 requirement. That assumption is now corrected.
 
-Qualcomm documentation identifies IPQ9574 in the NPro 7 family and specifies quad-core Arm CPU, Wi-Fi 7, up to 33 Gbps peak PHY capacity, 6 Ethernet ports with combinations including 2.5GbE, 5GbE and 10GbE, DDR3L/DDR4 support, and PCIe interfaces.
+Qualcomm's current NPro 7 documentation confirms IPQ9574 as a strong Wi-Fi 7/networking platform, but upstream Linux support documents its PCIe controllers as Gen3 x1/x2. Therefore IPQ9574 does **not** satisfy the PDS PCIe Gen4 requirement.
+
+MediaTek Filogic 880 is also documented with PCIe 3.0 and therefore does not satisfy the current PDS Gen4 requirement.
+
+The project shall not proceed to final SoC selection until this conflict is resolved.
+
+## 1. Candidate A — Qualcomm Dragonwing NPro 7 / IPQ9574
 
 Strengths:
-- strong Wi-Fi 7 positioning;
+- quad-core ARM Cortex-A73;
+- Wi-Fi 7;
+- tri-band 2.4/5/6 GHz;
 - 10GbE-class networking;
-- mature OpenWrt/community interest around Qualcomm networking platforms;
-- suitable performance class for X1.
+- DDR4 support;
+- mature Linux/OpenWrt ecosystem.
 
-Open items:
-- exact PCIe generation/lane allocation must be confirmed from the NDA/reference-design documentation;
-- exact Ethernet MAC/SerDes lane map must be confirmed;
-- exact radio-chain/FEM architecture must be confirmed;
-- USB4 host-controller integration must be validated;
-- lifecycle and commercial availability must be confirmed.
+Blocking issue:
+- PCIe implementation is Gen3, not Gen4.
 
-### Candidate B — MediaTek Filogic 880 / MT7988 + MT7996 platform
+Decision: **REJECTED against current PDS.**
 
-MediaTek documents identify Filogic 880 as a Wi-Fi 7 router/AP platform with quad-core Cortex-A73 CPU, NPU, tri-band 2.4/5/6 GHz operation, 36 Gbps maximum PHY rate, two 10Gbps USXGMII interfaces, one 2.5GbE interface and four 1GbE switch ports. The published platform exposes PCIe 3.0 and USB 3.x rather than USB4.
+Fallback status: retain only if the PDS is formally changed from PCIe Gen4 to PCIe Gen3.
+
+## 2. Candidate B — MediaTek Filogic 880
 
 Strengths:
-- strong Wi-Fi 7 feature set;
-- explicit OpenWrt support path;
-- two native 10GbE interfaces;
-- mature reference platforms.
+- quad-core Cortex-A73;
+- Wi-Fi 7;
+- two 10Gbps USXGMII interfaces;
+- DDR4;
+- strong NPU/network offload;
+- SPI-NOR/SPI-NAND support;
+- established Linux/OpenWrt ecosystem.
 
-Open items:
-- the published interface set does not directly match four 5GbE + two 10GbE SFP+ + two USB4 ports;
-- additional switching/PHY/USB4 silicon would be required;
-- PCIe 3.0 interface may conflict with the current X1 PCIe Gen4 requirement.
+Blocking issues:
+- PCIe 3.0;
+- native Ethernet mix does not directly provide four 5GbE + two 10GbE SFP+.
 
-## 2. USB4 candidate
+Decision: **REJECTED against current PDS.**
 
-### ASMedia ASM4242
+Fallback status: useful reference platform for the Wi-Fi/networking architecture.
 
-ASM4242 is a USB4 host controller with a PCIe Gen4 x4 upstream interface and two USB4 downstream ports. This makes it architecturally attractive because one controller can service the required two USB4 Type-C ports.
+## 3. USB4 — ASMedia ASM4242
 
-Required validation:
-- SoC PCIe lane availability and generation;
-- Linux/OpenWrt driver support;
-- Type-C/PD controller selection;
-- channel-loss and retimer requirements;
-- simultaneous USB4 traffic with Wi-Fi/Ethernet loads;
-- thermal impact.
+ASM4242 remains a strong candidate because it provides PCIe Gen4 x4 for two USB 40Gbps ports.
 
-## 3. Preliminary direction
+Blocking dependencies:
+- host must expose Gen4 x4;
+- Linux/OpenWrt driver support must be demonstrated;
+- channel loss must be simulated;
+- Type-C/PD architecture must be validated.
 
-The current X1 requirements strongly favor a networking SoC/platform with:
+Status: **Candidate — not selected.**
 
-1. Wi-Fi 7 integrated or tightly coupled;
-2. at least two 10GbE-class interfaces;
-3. multiple multi-gig Ethernet interfaces;
-4. PCIe Gen4 x4-class expansion for USB4;
-5. DDR4 support;
-6. secure boot;
-7. Linux/OpenWrt support;
-8. long lifecycle.
+## 4. 5GbE copper PHY
 
-No candidate is approved until the complete lane map and reference design satisfy the entire X1 interface budget.
+Marvell's Alaska M portfolio provides suitable multi-gig PHY families. The preferred direction is a quad-port 5G/2.5G/1G PHY or quad-port 10G/5G/2.5G/1G PHY, subject to host interface compatibility and availability.
 
-## 4. Important architecture finding
+Status: **Candidate family — not selected.**
 
-The existing PDS combines a very ambitious interface set:
+## 5. USB Type-C PD
 
-- 4 x 5GbE RJ45;
-- 2 x 10GbE SFP+;
-- 2 x USB4;
-- tri-band Wi-Fi 7;
-- dual independent NOR/NAND OS domains.
+TI TPS26750/TPS26750A are candidate PD controllers. TPS26750A is an active PD 3.2 controller supporting source/sink/DRP and EPR.
 
-A single consumer networking SoC is unlikely to expose all of these resources directly. The final board will probably require companion switching/PHY and USB4 silicon.
+The product will not advertise the controller's maximum theoretical PD power automatically. The actual port power will be limited by the system power and thermal budget.
 
-Therefore the engineering architecture must preserve a flexible high-speed expansion fabric rather than prematurely tying every port directly to the SoC.
+Status: **Candidate — not selected.**
 
-## 5. Selection gates
+## 6. Secure element
 
-A candidate becomes the selected platform only after:
+Microchip ATECC608 TrustFLEX-family devices are candidates for device identity and private-key protection.
 
-- NDA/reference documentation review;
-- lane-map review;
-- power budget;
+Status: **Candidate — not selected.**
+
+## 7. Required architecture change
+
+The current PDS requires:
+
+- quad-core ARM;
+- Wi-Fi 7;
+- PCIe Gen4;
+- 4 × 5GbE;
+- 2 × 10GbE SFP+;
+- 2 × USB4.
+
+The next candidate search must therefore consider either:
+
+### Architecture A — integrated networking SoC
+A single ARM networking platform with Gen4 PCIe and sufficient Ethernet fabric.
+
+### Architecture B — split networking platform
+A high-performance ARM application/network processor with Gen4 PCIe plus a dedicated Wi-Fi 7 platform and dedicated Ethernet switch/fabric.
+
+Architecture B is currently the more credible fallback if no suitable integrated consumer networking SoC is found.
+
+## 8. Selection gate
+
+No schematic pinout is frozen until a candidate passes:
+- PCIe generation/lane test;
+- Ethernet lane budget;
+- DDR topology;
+- storage interface budget;
+- secure-boot review;
+- Linux/OpenWrt support;
 - thermal budget;
-- BSP/OpenWrt validation;
-- lifecycle/availability review;
-- security review;
-- preliminary SI/PI review;
-- cost/BOM review;
-- regulatory suitability review.
-
-## Sources reviewed
-
-- Qualcomm Dragonwing NPro 7 platform documentation.
-- MediaTek Filogic 880 product documentation.
-- ASMedia ASM4242 product documentation.
+- power budget;
+- lifecycle review;
+- preliminary SI/PI review.
