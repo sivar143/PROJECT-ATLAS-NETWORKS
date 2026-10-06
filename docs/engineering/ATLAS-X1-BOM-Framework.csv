@@ -1,0 +1,21 @@
+Category,Subsystem,Item,Specification,Qty,Selection Status,Notes
+Compute,SoC,Networking SoC,Quad-core 64-bit ARM; hardware NAT/crypto; PCIe Gen4; secure boot,1,TBD,Must satisfy full interface budget
+Memory,DDR,Main memory,8 GB DDR4 or LPDDR4X,1,TBD,Final topology depends on SoC
+Storage,AtlasOS,SPI NOR A,256 MB,1,TBD,Independent boot domain
+Storage,AtlasOS,NAND A,4 GB,1,TBD,Independent AtlasOS storage
+Storage,OpenWrt,SPI NOR B,256 MB,1,TBD,Independent boot domain
+Storage,OpenWrt,NAND B,4 GB,1,TBD,Independent OpenWrt storage
+Security,Root of Trust,Secure element,Hardware-backed device identity and key storage,1,TBD,Select lifecycle-compatible device
+Wireless,Wi-Fi 7,Radio chipset,Tri-band 2.4/5/6 GHz Wi-Fi 7,1,TBD,Regulatory and BSP validation required
+Wireless,RF,FEM/LNA/PA,Per selected radio architecture,1,TBD,May be integrated
+Wireless,RF,Antenna,External high-gain antenna,4,TBD,Final gain/connector after RF design
+Ethernet,RJ45,5GbE LAN,5 Gbps RJ45 PHY/interface,4,TBD,Magnetics/ESD required
+Ethernet,SFP+,10GbE SFP+,2,TBD,Configurable WAN/LAN
+USB,USB4,USB4 Type-C subsystem,USB4 host/controller + Type-C/PD,2,TBD,Retimer if channel budget requires
+Display,OLED,Front OLED,Status/diagnostics display,1,TBD,Controller/interface TBD
+UI,Power button,RGB power button,Multistate status indicator,1,TBD,Must support diagnostic states
+Thermal,Fan,PWM cooling fan,Replaceable fan with tachometer,1,TBD,Final size from CFD/thermal testing
+Thermal,Filter,Dust filter,Removable serviceable filter,1,TBD,Mechanical design item
+Power,Adapter,External DC adapter,Power rating TBD after worst-case load,1,TBD,Do not freeze before system power budget
+Power,Protection,Input protection,Fuse/eFuse/TVS/reverse-current protection,1,TBD,Power architecture dependent
+Mechanical,Enclosure,Top/bottom shell,PC/ABS or equivalent engineering plastic,1,TBD,RF/thermal/mechanical validation
