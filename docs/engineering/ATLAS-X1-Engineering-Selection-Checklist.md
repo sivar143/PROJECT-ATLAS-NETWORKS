@@ -59,11 +59,15 @@
 ## Gate F — PCB
 
 - [ ] stack-up selected
+- [ ] PCB constraint matrix approved
+- [ ] PCB/mechanical coordinate datum synchronized
 - [ ] impedance targets calculated
 - [ ] SI/PI constraints imported
 - [ ] mechanical envelope frozen
 - [ ] connector datum and mounting-hole coordinates frozen
 - [ ] antenna locations and articulation envelope defined
+- [ ] antenna mechanical interface control approved
+- [ ] master physical-design baseline approved
 - [ ] RF/digital zoning approved
 - [ ] fan/filter/heatsink envelope coordinated with PCB
 - [ ] PCB-to-mechanical tolerance stack reviewed
