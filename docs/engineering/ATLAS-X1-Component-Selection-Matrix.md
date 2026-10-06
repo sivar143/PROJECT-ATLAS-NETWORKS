@@ -70,17 +70,23 @@ The quad-port device is preferred if its host interface and lifecycle are compat
 
 ## 7. USB4 direction
 
-ASMedia ASM4242 remains the leading candidate because it provides a PCIe Gen4 x4 host interface and two USB 40Gbps ports.
+The production target is now **USB4 Version 2 / Gen4 up to 80Gbps**. ASM4242 is retained only as a fallback/reference because it is a first-generation 40Gbps USB4 host controller.
 
-The design shall not commit to it until:
-- the host platform provides Gen4 x4;
-- Linux/OpenWrt driver support is demonstrated;
-- Type-C/PD controller architecture is validated;
-- channel-loss simulation passes.
+The production controller shall not be frozen until an orderable USB4 v2/80Gbps host controller passes:
+- PCIe Gen4/Gen5 host-interface validation;
+- Linux/OpenWrt driver support;
+- USB4 v2 compliance/interoperability review;
+- Type-C/PD controller validation;
+- channel-loss simulation;
+- power/thermal measurement.
+
+A 40Gbps-only controller is not acceptable as the final production choice.
 
 ## 8. Type-C/PD direction
 
-TI TPS26750/TPS26750A are candidate Type-C PD controllers. TPS26750A is a current active PD 3.2 controller supporting source/sink/DRP and EPR up to 240 W at the PD-controller level.
+Use the newest production-qualified USB PD controller available at schematic freeze. The controller must support the latest applicable USB Type-C/PD requirements, source/sink/DRP as required, robust protection and Linux-host controllability where applicable.
+
+Do not freeze a controller solely because it has a higher theoretical wattage. The actual X1 VBUS power limit shall be derived from the system power and thermal budget.
 
 For X1, the USB-C power policy should initially be **data-host + controlled source/DRP**, not a blanket 240 W port assumption. The actual VBUS power budget must be set by thermal and system power analysis.
 
@@ -90,8 +96,14 @@ Microchip ATECC608-family TrustFLEX parts are candidate secure elements for devi
 
 The secure element is not itself the complete secure-boot root; the selected SoC's secure-boot mechanism and boot ROM must be the primary firmware trust chain.
 
-## 10. Decision
+## 10. Latest-generation silicon gate
 
-**No final SoC selected yet.**
+All USB, Ethernet and power ICs are now subject to the repository-wide latest-generation silicon policy in `ATLAS-X1-Latest-Generation-Silicon-Policy.md`.
+
+The design must prefer the newest production-qualified, orderable and efficient device that satisfies the interface requirements. Preview/unreleased silicon shall not be frozen into the production BOM.
+
+## 11. Decision
+
+**No final SoC or peripheral silicon set selected yet.**
 
 The previous assumption that IPQ9574 could satisfy the PCIe Gen4 requirement is explicitly withdrawn. This is a required correction before schematic capture.
