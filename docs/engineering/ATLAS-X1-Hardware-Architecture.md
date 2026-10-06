@@ -4,12 +4,14 @@
 
 ATLAS X1 is divided into these hardware domains:
 
-- Compute/networking SoC
+- ARM network/application processor
 - DDR memory
 - Independent AtlasOS storage domain
 - Independent OpenWrt storage domain
 - Wi-Fi 7 radio/RF domain
-- Multi-gig Ethernet/SFP+ domain
+- Multi-gig Ethernet switch/fabric
+- 5GbE copper PHY domain
+- 10GbE SFP+ SerDes domain
 - Dual USB4 Type-C domain
 - Security/secure-element domain
 - Power-management domain
@@ -17,79 +19,113 @@ ATLAS X1 is divided into these hardware domains:
 - Display/input/indicator domain
 - Factory-test/debug domain
 
-## 2. Functional topology
+## 2. Architecture selection status
 
-                     +----------------------+
-                     |   DC Power Input     |
-                     +----------+-----------+
-                                |
-                         +------+------+
-                         | Power Tree  |
-                         +------+------+
-                                |
-        +-----------------------+------------------------+
-        |                       |                        |
-   +----v-----+            +----v-----+            +-----v------+
-   | Network  |            | Wi-Fi 7  |            | USB4 x2    |
-   | SoC      |<---------->| radios   |            | Type-C     |
-   +----+-----+            +----------+            +------------+
-        |
-  +-----+-------------------+--------------------+
-  |                         |                    |
-+--v---+                +----v----+          +----v----+
-| DDR  |                | Ethernet|          | SFP+ x2 |
-+------+                | switch  |          +---------+
-                        +----+----+
-                             |
-                         RJ45 LAN x4
+The project is currently between two candidate platform models:
 
-        +-------------------+-------------------+
-        |                                       |
- +------v------+                         +------v------+
- | AtlasOS     |                         | OpenWrt     |
- | NOR + NAND  |                         | NOR + NAND  |
- +-------------+                         +-------------+
-                                               /
-         ------------- Boot manager ----------/
-                         |
-                    HW selector
-                 Atlas / Auto / OWRT
+### Model A — integrated networking SoC
 
-## 3. Processor selection requirements
+Wi-Fi 7 + ARM + networking acceleration in one platform.
 
-The final SoC must provide, directly or through validated companion controllers:
+### Model B — split networking architecture
 
-- Quad-core 64-bit ARM compute
-- Hardware packet acceleration/NAT
-- Cryptographic acceleration
-- Secure boot/root-of-trust integration
-- PCIe Gen4 capability
-- High-speed DMA
-- Sufficient Ethernet interfaces for the selected switch architecture
-- Memory controller supporting the selected 8 GB memory technology
-- Linux/OpenWrt BSP maturity
-- Ten-year lifecycle availability target
-- Industrial-quality documentation and reference design support
+ARM processor/networking engine
+       |
+       +---- Ethernet switch/fabric
+       |       +---- 4 x 5GbE PHY -> RJ45
+       |       +---- 2 x 10GbE SerDes -> SFP+
+       |
+       +---- dedicated Wi-Fi 7 platform
+       |
+       +---- PCIe Gen4 x4 -> USB4 controller
 
-Decision gate: do not freeze the PCB until the SoC, DDR topology, Ethernet switch, Wi-Fi chipset, PCIe lane map and USB4 architecture are jointly validated.
+Model B is being investigated because the currently evaluated integrated Wi-Fi 7 networking SoCs do not satisfy the PDS PCIe Gen4 requirement.
 
-## 4. Interface budget
+## 3. Interface budget
 
 | Domain | Required interface |
 |---|---|
-| Memory | 8 GB DDR4/LPDDR4X, final after SoC selection |
-| Wi-Fi | PCIe/SoC-native interfaces as required by selected radio |
-| Ethernet | 4 x 5GbE RJ45 + 2 x 10GbE SFP+ |
+| CPU | Quad-core 64-bit ARM |
+| Memory | 8 GB DDR4/LPDDR4X |
+| Wi-Fi | Tri-band Wi-Fi 7 |
+| Ethernet | 4 x 5GbE RJ45 |
+| SFP+ | 2 x 10GbE configurable WAN/LAN |
 | USB | 2 x USB4 Type-C |
+| USB host | PCIe Gen4 x4 target |
 | Storage A | SPI NOR + NAND |
 | Storage B | SPI NOR + NAND |
-| Display | OLED controller interface |
-| Security | Secure element, preferably I2C/SPI |
-| Debug | UART/JTAG/SWD as supported |
-| Thermal | PWM fan + tachometer + temperature sensors |
+| Security | Secure element |
+| UI | OLED + RGB button |
+| Thermal | PWM fan + tachometer + sensors |
+| Debug | UART + JTAG or SoC-supported secure debug |
 
-## 5. Isolation principle
+## 4. Networking architecture
 
-The two operating-system domains shall remain electrically/logically independent wherever practical. The boot selector and recovery controller must not depend on a running OS for basic selection and recovery.
+The preferred topology is:
 
-Shared resources are limited to infrastructure such as power, chassis, display, fan and selected networking peripherals. Firmware ownership of shared peripherals must be explicitly defined before implementation.
+                 +------------------+
+                 | ARM Network CPU  |
+                 +--------+---------+
+                          |
+                  High-speed fabric
+                          |
+                 +--------v---------+
+                 | Ethernet Switch  |
+                 +--+--+--+--+--+--+
+                    |  |  |  |  |  |
+                   5G 5G 5G 5G 10G 10G
+                   RJ45 RJ45 RJ45 RJ45 SFP SFP
+
+The switch should perform local forwarding so LAN-to-LAN traffic does not unnecessarily traverse the CPU.
+
+## 5. USB4 architecture
+
+                 PCIe Gen4 x4
+                      |
+                +-----v------+
+                | USB4 Host  |
+                | Controller |
+                +--+-------+-+
+                   |       |
+                 USB4-A  USB4-B
+                   |       |
+                Type-C   Type-C
+
+A retimer/redriver is only populated if the final channel analysis requires it.
+
+## 6. Wi-Fi 7
+
+The final Wi-Fi 7 platform must provide:
+- 2.4 GHz;
+- 5 GHz;
+- 6 GHz;
+- required spatial streams;
+- MLO;
+- 320 MHz where permitted;
+- 4096-QAM;
+- OFDMA;
+- MU-MIMO;
+- beamforming;
+- regulatory control.
+
+## 7. Storage
+
+AtlasOS:
+- NOR-A;
+- NAND-A.
+
+OpenWrt:
+- NOR-B;
+- NAND-B.
+
+The boot selector and recovery controller must operate before normal OS execution.
+
+## 8. Decision gate
+
+Do not freeze the PCB until:
+- platform model is selected;
+- SoC/processor is selected;
+- Wi-Fi platform is selected;
+- Ethernet fabric is selected;
+- USB4 host is selected;
+- PCIe lane map is validated.
